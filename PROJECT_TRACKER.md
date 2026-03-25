@@ -45,10 +45,10 @@
 
 ### Phase 3: Frontend Features & Infrastructure
 - [x] Enhanced Index page with premium design and hero image ✅
-- [ ] Create user profiles in Neon database
-- [ ] Setup Render backend service
-- [ ] Deploy Frontend to Vercel
-- [ ] Implement Sign In / Sign Up logic
+- [x] GitHub Code Sync ✅
+- [x] Setup Render backend service ✅ (hotelm-backend.onrender.com)
+- [ ] Deploy Frontend to Vercel (Pending Valid Token)
+- [x] Implement Sign In / Sign Up pages ✅
 - [ ] Building dashboard and core features
 
 ---
