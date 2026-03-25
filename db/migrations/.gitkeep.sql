@@ -1,0 +1,5 @@
+-- Migrations directory
+-- Place numbered SQL migration files here:
+--   001_initial_schema.sql
+--   002_add_bookings.sql
+--   etc.

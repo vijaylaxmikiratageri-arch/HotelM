@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+dist/
+build/
+.next/
+__pycache__/
+*.pyc
+
+# Environment / Secret
+.env
+.env.local
+token
+db/*.js
+db/*.py
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Agent
+.agent/
+.gemini/

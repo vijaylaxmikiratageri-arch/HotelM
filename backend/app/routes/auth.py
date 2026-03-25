@@ -1,0 +1,71 @@
+from fastapi import APIRouter, HTTPException, Depends, status
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+from sqlalchemy.orm import Session
+from app.database import get_db
+from app.models import Staff
+from app.utils import hash_password, verify_password, create_access_token
+
+router = APIRouter()
+
+class UserCreate(BaseModel):
+    first_name: str
+    last_name: str
+    email: EmailStr
+    password: str
+    phone: Optional[str] = None
+    role: Optional[str] = "staff"
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    role: str
+
+    class Config:
+        from_attributes = True
+
+@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def signup(user: UserCreate, db: Session = Depends(get_db)):
+    # Check if user already exists
+    existing_user = db.query(Staff).filter(Staff.email == user.email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    hashed_pwd = hash_password(user.password)
+    new_staff = Staff(
+        first_name=user.first_name,
+        last_name=user.last_name,
+        email=user.email,
+        password_hash=hashed_pwd,
+        phone=user.phone,
+        role=user.role
+    )
+    
+    db.add(new_staff)
+    db.commit()
+    db.refresh(new_staff)
+    return new_staff
+
+@router.post("/signin", response_model=Token)
+async def signin(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(Staff).filter(Staff.email == user.email).first()
+    if not db_user or not verify_password(user.password, db_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token = create_access_token(data={"sub": db_user.email, "role": db_user.role})
+    return {"access_token": access_token, "token_type": "bearer"}
