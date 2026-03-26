@@ -212,7 +212,20 @@ body {
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: authFadeIn 0.8s ease-out forwards;
 }
+
+@keyframes authFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .auth-header {
   text-align: center;
